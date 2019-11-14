@@ -12,12 +12,16 @@ class Schedule extends Component {
     axios.get('https://totalcloud-static.s3.amazonaws.com/intern.json').then(response=>{
               this.setState({empData : response.data})
               console.log(this.state.empData);
-              console.log('i m component did mount of schedule');
+              console.log('componentDidMount of schedule');
           });
 
-   /* setInterval(() => {
-      this.setState({ refresh: Date.now() });
-    }, 1000);*/ 
+  
+  }
+//converting dd/mm/yyyy to mm/dd/yyyy
+  getDate = (datestr) => {
+    var str = datestr.split("/");
+    var date = new Date(str[1] + "/" + str[0]+ "/"+str[2])
+    return date;
   }
   
   
@@ -27,27 +31,29 @@ class Schedule extends Component {
     let columns = [
     
       { type: 'string', id: 'Name' },
+      { type: 'string', id: 'Label' },
       { type: 'date', id: 'Start' },
       { type: 'date', id: 'End' },
     ]; 
     let rows = []
-    let dateStartArray =[];  
-     dateStartArray = this.state.empData.map((emp)=>{     
+    let rowArray =[];  
+     rowArray = this.state.empData.map((emp)=>{     
         let obj={}
         obj["name"] = emp.name
-
-        obj["start"] = new Date(emp.start)
-        obj["end"] = new Date(emp.end)
+        obj["label"] = emp.name
+        obj["start"] = this.getDate(emp.start)
+        obj["end"] = this.getDate(emp.end)
         return obj
     })
    
 
     
   
-  for(var i=0;i < dateStartArray.length; i++){
-    let o =  dateStartArray[i]
+  for(var i=0;i < rowArray.length; i++){
+    let o =  rowArray[i]
     let row = [];
     row.push(o.name);
+    row.push(o.label);  
     row.push(o.start);
     row.push(o.end)
     rows.push(row)
@@ -55,19 +61,28 @@ class Schedule extends Component {
 
      //  console.log(rows)
         return (
+          <>
+           <br></br><br></br>
       <div className="App">
         <Chart
           chartType="Timeline"
           data={[columns, ...rows]}
-          width="auto"
+          width="100%"
           height="400px"
           options={{
          timeline: {
          singleColor: 'red',
+         showRowLabels: true,
+         
     },
   }}
         />
-      </div>  
+        
+      </div>
+      <br></br>
+      <button className='btn btn-primary' >Check Availability</button>
+     
+      </>  
     );
   }
 }

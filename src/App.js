@@ -7,13 +7,23 @@ import Schedule from './Components/Schedule/Schedule'
 
 class App extends Component
  {
+   state={
+     show:false
+   }
+   //showing the schedule of employees on click of check Schedule button.
+   toggleComponent=()=>{
+    const {show} = this.state;
+    this.setState({show:!show})
+
+}
      render()
      {
         return (
             <div className="App">
-             Total cloud
+         <h3> <strong>Meeting Scheduler</strong> </h3>  
              <Employees/>
-             <Schedule/>
+             <button className='btn btn-primary' onClick={this.toggleComponent} >Check Schedule</button>
+            {this.state.show && <Schedule/>} 
         
             </div>
 
